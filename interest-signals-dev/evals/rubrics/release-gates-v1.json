@@ -1,0 +1,17 @@
+{
+  "schema_version": "1.0",
+  "id": "release-gates-v1",
+  "deterministic_pass_rate_min": 1.0,
+  "planner_exact_match_min": 0.9,
+  "planner_module_precision_min": 0.9,
+  "planner_module_recall_min": 0.9,
+  "critical_agent_hard_gate_pass_rate_min": 1.0,
+  "agent_weighted_score_min": 85.0,
+  "maximum_agent_failed_cases": 0,
+  "maximum_regressions": 0,
+  "live_policy": {
+    "product_failure_blocks_release": true,
+    "infrastructure_error_blocks_release": false,
+    "not_run_is_incomplete": true
+  }
+}

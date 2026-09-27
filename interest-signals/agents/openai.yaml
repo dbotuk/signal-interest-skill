@@ -1,0 +1,3 @@
+interface:
+  display_name: "Interest Signals"
+  short_description: "Plan adaptive interest-signal analysis and reports"

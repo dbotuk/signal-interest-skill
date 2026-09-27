@@ -1,0 +1,549 @@
+{
+  "schema_version": "1.0",
+  "run_id": "20260927T160337Z-deterministic",
+  "generated_at": "2026-09-27T16:03:37.171440+00:00",
+  "skill_sha256": "ba5088084097c67814e9722199277a26759f03debacfdb49a1121ad2f8830d40",
+  "layers": [
+    "engine",
+    "planner"
+  ],
+  "summary": {
+    "case_count": 18,
+    "passed": 18,
+    "failed": 0,
+    "pass_rate": 1.0,
+    "planner": {
+      "case_count": 10,
+      "exact_match_rate": 1.0,
+      "module_precision": 1.0,
+      "module_recall": 1.0,
+      "module_f1": 1.0
+    }
+  },
+  "cases": [
+    {
+      "case_id": "engine-smooth-growth",
+      "layer": "engine",
+      "status": "passed",
+      "assertions": [
+        {
+          "passed": true,
+          "path": "months",
+          "op": "equals",
+          "expected": 30,
+          "actual": 30
+        },
+        {
+          "passed": true,
+          "path": "annualized_trend_pct",
+          "op": "between",
+          "expected": {
+            "min": 34.0,
+            "max": 35.0
+          },
+          "actual": 34.20881205876346
+        },
+        {
+          "passed": true,
+          "path": "trend_ci_95_pct.0",
+          "op": "greater",
+          "expected": 30.0,
+          "actual": 34.19455416689998
+        },
+        {
+          "passed": true,
+          "path": "event_sensitive",
+          "op": "equals",
+          "expected": false,
+          "actual": false
+        }
+      ]
+    },
+    {
+      "case_id": "engine-flat-signal",
+      "layer": "engine",
+      "status": "passed",
+      "assertions": [
+        {
+          "passed": true,
+          "path": "annualized_trend_pct",
+          "op": "approx",
+          "expected": 0.0,
+          "actual": 0.0
+        },
+        {
+          "passed": true,
+          "path": "trailing_12m_growth_pct",
+          "op": "approx",
+          "expected": 0.0,
+          "actual": 0.0
+        },
+        {
+          "passed": true,
+          "path": "event_sensitive",
+          "op": "equals",
+          "expected": false,
+          "actual": false
+        }
+      ]
+    },
+    {
+      "case_id": "engine-single-spike",
+      "layer": "engine",
+      "status": "passed",
+      "assertions": [
+        {
+          "passed": true,
+          "path": "peak_month_share",
+          "op": "greater",
+          "expected": 0.65,
+          "actual": 0.684931506849315
+        },
+        {
+          "passed": true,
+          "path": "event_sensitive",
+          "op": "equals",
+          "expected": true,
+          "actual": true
+        },
+        {
+          "passed": true,
+          "path": "trend_without_peak_pct",
+          "op": "approx",
+          "expected": 0.0,
+          "actual": 0.0
+        }
+      ]
+    },
+    {
+      "case_id": "engine-gap-disables-momentum",
+      "layer": "engine",
+      "status": "passed",
+      "assertions": [
+        {
+          "passed": true,
+          "path": "months",
+          "op": "equals",
+          "expected": 17,
+          "actual": 17
+        },
+        {
+          "passed": true,
+          "path": "recent_3m_momentum_pct",
+          "op": "is_null",
+          "expected": null,
+          "actual": null
+        },
+        {
+          "passed": true,
+          "path": "annualized_trend_pct",
+          "op": "not_null",
+          "expected": null,
+          "actual": 26.570499250892293
+        }
+      ]
+    },
+    {
+      "case_id": "engine-short-history",
+      "layer": "engine",
+      "status": "passed",
+      "assertions": [
+        {
+          "passed": true,
+          "path": "months",
+          "op": "equals",
+          "expected": 8,
+          "actual": 8
+        },
+        {
+          "passed": true,
+          "path": "annualized_trend_pct",
+          "op": "not_null",
+          "expected": null,
+          "actual": 0.0
+        },
+        {
+          "passed": true,
+          "path": "trailing_12m_growth_pct",
+          "op": "is_null",
+          "expected": null,
+          "actual": null
+        }
+      ]
+    },
+    {
+      "case_id": "engine-raw-growth",
+      "layer": "engine",
+      "status": "passed",
+      "assertions": [
+        {
+          "passed": true,
+          "path": "annualized_trend_pct",
+          "op": "greater",
+          "expected": 30.0,
+          "actual": 34.33823722638719
+        }
+      ]
+    },
+    {
+      "case_id": "engine-share-decline",
+      "layer": "engine",
+      "status": "passed",
+      "assertions": [
+        {
+          "passed": true,
+          "path": "annualized_trend_pct",
+          "op": "less",
+          "expected": -18.0,
+          "actual": -20.385829237045776
+        }
+      ]
+    },
+    {
+      "case_id": "engine-zero-safe",
+      "layer": "engine",
+      "status": "passed",
+      "assertions": [
+        {
+          "passed": true,
+          "path": "mean_monthly",
+          "op": "equals",
+          "expected": 0.0,
+          "actual": 0.0
+        },
+        {
+          "passed": true,
+          "path": "peak_month_share",
+          "op": "equals",
+          "expected": 0.0,
+          "actual": 0.0
+        },
+        {
+          "passed": true,
+          "path": "event_sensitive",
+          "op": "equals",
+          "expected": false,
+          "actual": false
+        }
+      ]
+    },
+    {
+      "case_id": "planner-baseline-only",
+      "layer": "planner",
+      "status": "passed",
+      "mode": {
+        "expected": "baseline_only",
+        "actual": "baseline_only"
+      },
+      "selected_modules": {
+        "expected": [],
+        "actual": []
+      },
+      "skipped_modules": {
+        "expected": [],
+        "actual": []
+      },
+      "module_counts": {
+        "true_positive": 0,
+        "false_positive": 0,
+        "false_negative": 0
+      },
+      "assertions": []
+    },
+    {
+      "case_id": "planner-seasonality-uk",
+      "layer": "planner",
+      "status": "passed",
+      "mode": {
+        "expected": "adaptive",
+        "actual": "adaptive"
+      },
+      "selected_modules": {
+        "expected": [
+          "seasonality"
+        ],
+        "actual": [
+          "seasonality"
+        ]
+      },
+      "skipped_modules": {
+        "expected": [],
+        "actual": []
+      },
+      "module_counts": {
+        "true_positive": 1,
+        "false_positive": 0,
+        "false_negative": 0
+      },
+      "assertions": [
+        {
+          "passed": true,
+          "path": "series.0.adaptive_analysis.seasonality.status",
+          "op": "equals",
+          "expected": "computed",
+          "actual": "computed"
+        },
+        {
+          "passed": true,
+          "path": "series.0.adaptive_analysis.seasonality.strongest_calendar_month",
+          "op": "equals",
+          "expected": "09",
+          "actual": "09"
+        }
+      ]
+    },
+    {
+      "case_id": "planner-anomaly-intent",
+      "layer": "planner",
+      "status": "passed",
+      "mode": {
+        "expected": "adaptive",
+        "actual": "adaptive"
+      },
+      "selected_modules": {
+        "expected": [
+          "anomalies"
+        ],
+        "actual": [
+          "anomalies"
+        ]
+      },
+      "skipped_modules": {
+        "expected": [],
+        "actual": []
+      },
+      "module_counts": {
+        "true_positive": 1,
+        "false_positive": 0,
+        "false_negative": 0
+      },
+      "assertions": []
+    },
+    {
+      "case_id": "planner-stability-intent",
+      "layer": "planner",
+      "status": "passed",
+      "mode": {
+        "expected": "adaptive",
+        "actual": "adaptive"
+      },
+      "selected_modules": {
+        "expected": [
+          "stability"
+        ],
+        "actual": [
+          "stability"
+        ]
+      },
+      "skipped_modules": {
+        "expected": [],
+        "actual": []
+      },
+      "module_counts": {
+        "true_positive": 1,
+        "false_positive": 0,
+        "false_negative": 0
+      },
+      "assertions": [
+        {
+          "passed": true,
+          "path": "series.0.adaptive_analysis.stability.label",
+          "op": "equals",
+          "expected": "volatile",
+          "actual": "volatile"
+        }
+      ]
+    },
+    {
+      "case_id": "planner-changepoint-intent",
+      "layer": "planner",
+      "status": "passed",
+      "mode": {
+        "expected": "adaptive",
+        "actual": "adaptive"
+      },
+      "selected_modules": {
+        "expected": [
+          "changepoints"
+        ],
+        "actual": [
+          "changepoints"
+        ]
+      },
+      "skipped_modules": {
+        "expected": [],
+        "actual": []
+      },
+      "module_counts": {
+        "true_positive": 1,
+        "false_positive": 0,
+        "false_negative": 0
+      },
+      "assertions": [
+        {
+          "passed": true,
+          "path": "series.0.adaptive_analysis.changepoints.candidate_detected",
+          "op": "equals",
+          "expected": true,
+          "actual": true
+        }
+      ]
+    },
+    {
+      "case_id": "planner-combined-intents",
+      "layer": "planner",
+      "status": "passed",
+      "mode": {
+        "expected": "adaptive",
+        "actual": "adaptive"
+      },
+      "selected_modules": {
+        "expected": [
+          "anomalies",
+          "stability"
+        ],
+        "actual": [
+          "anomalies",
+          "stability"
+        ]
+      },
+      "skipped_modules": {
+        "expected": [],
+        "actual": []
+      },
+      "module_counts": {
+        "true_positive": 2,
+        "false_positive": 0,
+        "false_negative": 0
+      },
+      "assertions": []
+    },
+    {
+      "case_id": "planner-explicit-modules",
+      "layer": "planner",
+      "status": "passed",
+      "mode": {
+        "expected": "explicit",
+        "actual": "explicit"
+      },
+      "selected_modules": {
+        "expected": [
+          "seasonality",
+          "stability"
+        ],
+        "actual": [
+          "seasonality",
+          "stability"
+        ]
+      },
+      "skipped_modules": {
+        "expected": [],
+        "actual": []
+      },
+      "module_counts": {
+        "true_positive": 2,
+        "false_positive": 0,
+        "false_negative": 0
+      },
+      "assertions": []
+    },
+    {
+      "case_id": "planner-short-history-skip",
+      "layer": "planner",
+      "status": "passed",
+      "mode": {
+        "expected": "explicit",
+        "actual": "explicit"
+      },
+      "selected_modules": {
+        "expected": [],
+        "actual": []
+      },
+      "skipped_modules": {
+        "expected": [
+          "seasonality"
+        ],
+        "actual": [
+          "seasonality"
+        ]
+      },
+      "module_counts": {
+        "true_positive": 0,
+        "false_positive": 0,
+        "false_negative": 0
+      },
+      "assertions": []
+    },
+    {
+      "case_id": "planner-negative-results",
+      "layer": "planner",
+      "status": "passed",
+      "mode": {
+        "expected": "adaptive",
+        "actual": "adaptive"
+      },
+      "selected_modules": {
+        "expected": [
+          "anomalies",
+          "changepoints"
+        ],
+        "actual": [
+          "anomalies",
+          "changepoints"
+        ]
+      },
+      "skipped_modules": {
+        "expected": [],
+        "actual": []
+      },
+      "module_counts": {
+        "true_positive": 2,
+        "false_positive": 0,
+        "false_negative": 0
+      },
+      "assertions": [
+        {
+          "passed": true,
+          "path": "series.0.adaptive_analysis.changepoints.candidate_detected",
+          "op": "equals",
+          "expected": false,
+          "actual": false
+        },
+        {
+          "passed": true,
+          "path": "series.0.adaptive_analysis.anomalies.candidates",
+          "op": "equals",
+          "expected": [],
+          "actual": []
+        }
+      ]
+    },
+    {
+      "case_id": "planner-core-trigger",
+      "layer": "planner",
+      "status": "passed",
+      "mode": {
+        "expected": "adaptive",
+        "actual": "adaptive"
+      },
+      "selected_modules": {
+        "expected": [
+          "anomalies"
+        ],
+        "actual": [
+          "anomalies"
+        ]
+      },
+      "skipped_modules": {
+        "expected": [],
+        "actual": []
+      },
+      "module_counts": {
+        "true_positive": 1,
+        "false_positive": 0,
+        "false_negative": 0
+      },
+      "assertions": []
+    }
+  ]
+}

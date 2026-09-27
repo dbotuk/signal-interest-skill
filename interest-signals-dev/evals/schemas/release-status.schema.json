@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.invalid/interest-signals/release-status.schema.json",
+  "title": "Evaluation release-gate status",
+  "type": "object",
+  "required": ["schema_version", "generated_at", "status", "checks", "regressions", "failures", "incomplete_reasons"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "generated_at": {"type": "string", "format": "date-time"},
+    "status": {"enum": ["passed", "failed", "incomplete"]},
+    "checks": {"type": "array", "items": {"type": "object"}},
+    "regressions": {"type": "array", "items": {"type": "string"}},
+    "failures": {"type": "array", "items": {"type": "string"}},
+    "incomplete_reasons": {"type": "array", "items": {"type": "string"}}
+  }
+}

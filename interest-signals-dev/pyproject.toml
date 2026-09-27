@@ -1,0 +1,15 @@
+[project]
+name = "interest-signals-development"
+version = "1.1.0"
+description = "Development environment for the interest-signals Agent Skill"
+requires-python = ">=3.11"
+dependencies = [
+  "reportlab==4.4.9",
+  "pillow==12.3.0",
+  "charset-normalizer==3.5.1",
+  "pypdf==6.10.0",
+  "pymupdf-fonts==1.0.5",
+]
+
+[tool.uv]
+package = false

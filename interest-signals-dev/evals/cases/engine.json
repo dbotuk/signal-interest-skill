@@ -1,0 +1,115 @@
+{
+  "schema_version": "1.0",
+  "layer": "engine",
+  "cases": [
+    {
+      "id": "engine-smooth-growth",
+      "title": "Recovers a smooth compound trend",
+      "tags": ["regression", "trend"],
+      "fixture": "smooth-growth-30",
+      "input": {"operation": "analyze_metric", "metric": "raw", "bootstrap_samples": 300, "seed": 11},
+      "expected": {
+        "assertions": [
+          {"path": "months", "op": "equals", "value": 30},
+          {"path": "annualized_trend_pct", "op": "between", "min": 34.0, "max": 35.0},
+          {"path": "trend_ci_95_pct.0", "op": "greater", "value": 30.0},
+          {"path": "event_sensitive", "op": "equals", "value": false}
+        ]
+      }
+    },
+    {
+      "id": "engine-flat-signal",
+      "title": "Keeps a flat signal flat",
+      "tags": ["regression", "trend"],
+      "fixture": "flat-24",
+      "input": {"operation": "analyze_metric", "metric": "raw", "bootstrap_samples": 200, "seed": 12},
+      "expected": {
+        "assertions": [
+          {"path": "annualized_trend_pct", "op": "approx", "value": 0.0, "tolerance": 0.000001},
+          {"path": "trailing_12m_growth_pct", "op": "approx", "value": 0.0, "tolerance": 0.000001},
+          {"path": "event_sensitive", "op": "equals", "value": false}
+        ]
+      }
+    },
+    {
+      "id": "engine-single-spike",
+      "title": "Marks a one-month spike as event-sensitive",
+      "tags": ["regression", "robustness", "event"],
+      "fixture": "single-spike-24",
+      "input": {"operation": "analyze_metric", "metric": "raw", "bootstrap_samples": 200, "seed": 13},
+      "expected": {
+        "assertions": [
+          {"path": "peak_month_share", "op": "greater", "value": 0.65},
+          {"path": "event_sensitive", "op": "equals", "value": true},
+          {"path": "trend_without_peak_pct", "op": "approx", "value": 0.0, "tolerance": 0.000001}
+        ]
+      }
+    },
+    {
+      "id": "engine-gap-disables-momentum",
+      "title": "Does not bridge a missing recent month",
+      "tags": ["adversarial", "missing-data"],
+      "fixture": "gapped-18",
+      "input": {"operation": "analyze_metric", "metric": "raw", "bootstrap_samples": 200, "seed": 14},
+      "expected": {
+        "assertions": [
+          {"path": "months", "op": "equals", "value": 17},
+          {"path": "recent_3m_momentum_pct", "op": "is_null"},
+          {"path": "annualized_trend_pct", "op": "not_null"}
+        ]
+      }
+    },
+    {
+      "id": "engine-short-history",
+      "title": "Computes only supported statistics for a short history",
+      "tags": ["boundary", "short-history"],
+      "fixture": "short-8",
+      "input": {"operation": "analyze_metric", "metric": "raw", "bootstrap_samples": 200, "seed": 15},
+      "expected": {
+        "assertions": [
+          {"path": "months", "op": "equals", "value": 8},
+          {"path": "annualized_trend_pct", "op": "not_null"},
+          {"path": "trailing_12m_growth_pct", "op": "is_null"}
+        ]
+      }
+    },
+    {
+      "id": "engine-raw-growth",
+      "title": "Measures growth in the raw series",
+      "tags": ["normalization", "metric"],
+      "fixture": "raw-share-disagree-24",
+      "input": {"operation": "analyze_metric", "metric": "raw", "bootstrap_samples": 200, "seed": 16},
+      "expected": {
+        "assertions": [
+          {"path": "annualized_trend_pct", "op": "greater", "value": 30.0}
+        ]
+      }
+    },
+    {
+      "id": "engine-share-decline",
+      "title": "Measures decline in the normalized series",
+      "tags": ["normalization", "metric"],
+      "fixture": "raw-share-disagree-24",
+      "input": {"operation": "analyze_metric", "metric": "share", "bootstrap_samples": 200, "seed": 17},
+      "expected": {
+        "assertions": [
+          {"path": "annualized_trend_pct", "op": "less", "value": -18.0}
+        ]
+      }
+    },
+    {
+      "id": "engine-zero-safe",
+      "title": "Handles an all-zero metric without NaN values",
+      "tags": ["boundary", "numerics"],
+      "fixture": "flat-24",
+      "input": {"operation": "analyze_metric", "metric": "literal", "values": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "bootstrap_samples": 200, "seed": 18},
+      "expected": {
+        "assertions": [
+          {"path": "mean_monthly", "op": "equals", "value": 0.0},
+          {"path": "peak_month_share", "op": "equals", "value": 0.0},
+          {"path": "event_sensitive", "op": "equals", "value": false}
+        ]
+      }
+    }
+  ]
+}

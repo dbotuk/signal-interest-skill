@@ -1,0 +1,46 @@
+{
+  "schema_version": "1.0",
+  "layer": "live",
+  "cases": [
+    {
+      "id": "live-resolution-only",
+      "title": "Resolves a stable public topic without collecting history",
+      "tags": ["network", "resolution"],
+      "input": {
+        "network": true,
+        "timeout_seconds": 90,
+        "steps": [
+          ["--topic", "OpenAI", "--languages", "en", "--resolve-only", "--output-dir", "{{OUTPUT_DIR}}"]
+        ]
+      },
+      "expected": {"artifacts": ["resolution.json"]}
+    },
+    {
+      "id": "live-historical-bundle",
+      "title": "Produces an auditable historical bundle",
+      "tags": ["network", "workflow"],
+      "input": {
+        "network": true,
+        "timeout_seconds": 180,
+        "steps": [
+          ["--topic", "OpenAI", "--languages", "en", "--start", "2024-01-01", "--end", "2024-12-31", "--formats", "csv", "--output-dir", "{{OUTPUT_DIR}}"]
+        ]
+      },
+      "expected": {"artifacts": ["request.json", "resolution.json", "analysis.json", "series.csv", "manifest.json"]}
+    },
+    {
+      "id": "live-cached-rerun",
+      "title": "Repeats a request using the same output cache",
+      "tags": ["network", "cache", "workflow"],
+      "input": {
+        "network": true,
+        "timeout_seconds": 240,
+        "steps": [
+          ["--topic", "OpenAI", "--languages", "en", "--start", "2024-01-01", "--end", "2024-06-30", "--formats", "csv", "--output-dir", "{{OUTPUT_DIR}}"],
+          ["--topic", "OpenAI", "--languages", "en", "--start", "2024-01-01", "--end", "2024-06-30", "--formats", "csv", "--output-dir", "{{OUTPUT_DIR}}"]
+        ]
+      },
+      "expected": {"artifacts": ["request.json", "analysis.json", "manifest.json"]}
+    }
+  ]
+}

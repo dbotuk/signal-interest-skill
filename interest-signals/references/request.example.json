@@ -1,0 +1,20 @@
+{
+  "topic": "astronomy",
+  "question": "Which language has the most stable attention, and were there unusual spikes?",
+  "analysis_modules": ["auto"],
+  "source_language": "en",
+  "languages": ["uk", "pl"],
+  "titles": {},
+  "start": "2024-01-01",
+  "end": "2025-12-31",
+  "metric": "share",
+  "weights": {
+    "growth": 0.5,
+    "volume": 0.2,
+    "reliability": 0.3
+  },
+  "formats": ["csv", "svg", "html", "pdf"],
+  "bootstrap_samples": 600,
+  "seed": 1729,
+  "allow_search_fallback": false
+}

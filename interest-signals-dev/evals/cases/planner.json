@@ -1,0 +1,116 @@
+{
+  "schema_version": "1.0",
+  "layer": "planner",
+  "cases": [
+    {
+      "id": "planner-baseline-only",
+      "title": "A generic growth question stays on the stable baseline",
+      "tags": ["routing", "baseline"],
+      "fixture": "smooth-growth-30",
+      "input": {"question": "How has attention changed?", "modules": ["auto"], "selected_metric": "raw"},
+      "expected": {"mode": "baseline_only", "selected_modules": [], "skipped_modules": []}
+    },
+    {
+      "id": "planner-seasonality-uk",
+      "title": "Ukrainian seasonality intent selects seasonality",
+      "tags": ["routing", "multilingual", "seasonality"],
+      "fixture": "seasonal-36",
+      "input": {"question": "Чи є тут сезонність?", "modules": ["auto"], "selected_metric": "raw"},
+      "expected": {
+        "mode": "adaptive",
+        "selected_modules": ["seasonality"],
+        "skipped_modules": [],
+        "assertions": [
+          {"path": "series.0.adaptive_analysis.seasonality.status", "op": "equals", "value": "computed"},
+          {"path": "series.0.adaptive_analysis.seasonality.strongest_calendar_month", "op": "equals", "value": "09"}
+        ]
+      }
+    },
+    {
+      "id": "planner-anomaly-intent",
+      "title": "Anomaly intent selects an anomaly scan",
+      "tags": ["routing", "anomalies"],
+      "fixture": "single-spike-24",
+      "input": {"question": "Was there an unusual spike?", "modules": ["auto"], "selected_metric": "raw"},
+      "expected": {"mode": "adaptive", "selected_modules": ["anomalies"], "skipped_modules": []}
+    },
+    {
+      "id": "planner-stability-intent",
+      "title": "Stability intent selects stability analysis",
+      "tags": ["routing", "stability"],
+      "fixture": "volatile-24",
+      "input": {"question": "How stable or volatile is this signal?", "modules": ["auto"], "selected_metric": "raw"},
+      "expected": {
+        "mode": "adaptive",
+        "selected_modules": ["stability"],
+        "skipped_modules": [],
+        "assertions": [
+          {"path": "series.0.adaptive_analysis.stability.label", "op": "equals", "value": "volatile"}
+        ]
+      }
+    },
+    {
+      "id": "planner-changepoint-intent",
+      "title": "Sudden-change intent selects changepoints",
+      "tags": ["routing", "changepoints"],
+      "fixture": "level-shift-24",
+      "input": {"question": "Was there a sudden change in the signal?", "modules": ["auto"], "selected_metric": "raw"},
+      "expected": {
+        "mode": "adaptive",
+        "selected_modules": ["changepoints"],
+        "skipped_modules": [],
+        "assertions": [
+          {"path": "series.0.adaptive_analysis.changepoints.candidate_detected", "op": "equals", "value": true}
+        ]
+      }
+    },
+    {
+      "id": "planner-combined-intents",
+      "title": "Multiple intents compose without losing modules",
+      "tags": ["routing", "composition"],
+      "fixture": "volatile-24",
+      "input": {"question": "Are there anomalies and is the signal stable?", "modules": ["auto"], "selected_metric": "raw"},
+      "expected": {"mode": "adaptive", "selected_modules": ["anomalies", "stability"], "skipped_modules": []}
+    },
+    {
+      "id": "planner-explicit-modules",
+      "title": "Explicit modules override intent routing",
+      "tags": ["routing", "explicit"],
+      "fixture": "seasonal-36",
+      "input": {"question": null, "modules": ["seasonality", "stability"], "selected_metric": "raw"},
+      "expected": {"mode": "explicit", "selected_modules": ["seasonality", "stability"], "skipped_modules": []}
+    },
+    {
+      "id": "planner-short-history-skip",
+      "title": "Unsupported modules are recorded as skipped",
+      "tags": ["routing", "short-history", "skip"],
+      "fixture": "short-8",
+      "input": {"question": null, "modules": ["seasonality"], "selected_metric": "raw"},
+      "expected": {"mode": "explicit", "selected_modules": [], "skipped_modules": ["seasonality"]}
+    },
+    {
+      "id": "planner-negative-results",
+      "title": "Selected scans may correctly return negative findings",
+      "tags": ["routing", "negative-result"],
+      "fixture": "smooth-growth-30",
+      "input": {"question": "Are there anomalies or a sudden change?", "modules": ["auto"], "selected_metric": "raw"},
+      "expected": {
+        "mode": "adaptive",
+        "selected_modules": ["changepoints", "anomalies"],
+        "skipped_modules": [],
+        "assertions": [
+          {"path": "series.0.adaptive_analysis.changepoints.candidate_detected", "op": "equals", "value": false},
+          {"path": "series.0.adaptive_analysis.anomalies.candidates", "op": "equals", "value": []}
+        ]
+      }
+    },
+    {
+      "id": "planner-core-trigger",
+      "title": "Core peak sensitivity can trigger an anomaly scan",
+      "tags": ["routing", "core-trigger"],
+      "fixture": "single-spike-24",
+      "input": {"question": null, "modules": ["auto"], "selected_metric": "raw"},
+      "expected": {"mode": "adaptive", "selected_modules": ["anomalies"], "skipped_modules": []}
+    }
+  ]
+}

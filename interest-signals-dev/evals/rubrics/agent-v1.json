@@ -1,0 +1,23 @@
+{
+  "schema_version": "1.0",
+  "id": "agent-v1",
+  "description": "Programmatic gates plus optional blind-judge scores for end-to-end skill use.",
+  "categories": {
+    "methodological_correctness": 25,
+    "planner_behavior": 20,
+    "evidence_and_uncertainty": 20,
+    "grounded_interpretation": 15,
+    "artifacts_and_provenance": 15,
+    "efficiency": 5
+  },
+  "hard_gates": [
+    "analysis_read",
+    "no_market_claim",
+    "no_missing_as_zero",
+    "module_selection",
+    "requested_artifacts",
+    "request_digest_matches",
+    "resolution_first"
+  ],
+  "policy": "Any applicable hard-gate failure fails the case regardless of weighted score. Judge scores may refine qualitative categories but cannot override a hard gate."
+}

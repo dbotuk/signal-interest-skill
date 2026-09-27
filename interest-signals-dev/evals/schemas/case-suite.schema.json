@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.invalid/interest-signals/case-suite.schema.json",
+  "title": "Interest Signals evaluation case suite",
+  "type": "object",
+  "required": ["schema_version", "layer", "cases"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "layer": {"enum": ["engine", "planner", "agent", "live"]},
+    "cases": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "title", "tags", "input", "expected"],
+        "additionalProperties": false,
+        "properties": {
+          "id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]+$"},
+          "title": {"type": "string", "minLength": 1},
+          "tags": {
+            "type": "array",
+            "items": {"type": "string"},
+            "uniqueItems": true
+          },
+          "fixture": {"type": "string"},
+          "prompt": {"type": "string"},
+          "rubric": {"type": "string"},
+          "input": {"type": "object"},
+          "expected": {"type": "object"}
+        }
+      }
+    }
+  }
+}

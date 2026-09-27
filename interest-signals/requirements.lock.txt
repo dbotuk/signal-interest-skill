@@ -1,0 +1,6 @@
+# Exact runtime versions used for the verified PDF workflow.
+charset-normalizer==3.5.1
+pillow==12.3.0
+pypdf==6.10.0
+pymupdf-fonts==1.0.5
+reportlab==4.4.9

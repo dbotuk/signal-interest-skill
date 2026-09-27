@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.invalid/interest-signals/agent-result.schema.json",
+  "title": "Interest Signals agent evaluation result",
+  "type": "object",
+  "required": ["schema_version", "case_id", "status", "response_file"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "case_id": {"type": "string"},
+    "status": {
+      "enum": ["not_run", "completed", "blocked", "infrastructure_error"]
+    },
+    "response_file": {"type": "string"},
+    "bundle_dir": {"type": ["string", "null"]},
+    "trace_file": {"type": ["string", "null"]},
+    "telemetry": {
+      "type": "object",
+      "properties": {
+        "model": {"type": ["string", "null"]},
+        "reasoning_effort": {"type": ["string", "null"]},
+        "latency_seconds": {"type": ["number", "null"], "minimum": 0},
+        "tool_calls": {"type": ["integer", "null"], "minimum": 0},
+        "api_requests": {"type": ["integer", "null"], "minimum": 0}
+      },
+      "additionalProperties": true
+    },
+    "judge_scores": {
+      "type": "object",
+      "additionalProperties": {"type": "number", "minimum": 0}
+    },
+    "notes": {"type": ["string", "null"]}
+  }
+}

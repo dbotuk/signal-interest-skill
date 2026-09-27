@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.invalid/interest-signals/run-summary.schema.json",
+  "title": "Interest Signals evaluation run summary",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "run_id",
+    "generated_at",
+    "skill_sha256",
+    "layers",
+    "summary",
+    "cases"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "run_id": {"type": "string"},
+    "generated_at": {"type": "string", "format": "date-time"},
+    "skill_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "layers": {"type": "array", "items": {"type": "string"}},
+    "summary": {"type": "object"},
+    "cases": {"type": "array", "items": {"type": "object"}}
+  }
+}

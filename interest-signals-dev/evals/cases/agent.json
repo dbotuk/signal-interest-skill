@@ -1,0 +1,126 @@
+{
+  "schema_version": "1.0",
+  "layer": "agent",
+  "cases": [
+    {
+      "id": "agent-growth-summary",
+      "title": "Summarizes a growth signal with uncertainty",
+      "tags": ["regression", "fixture-review"],
+      "fixture": "smooth-growth-30",
+      "rubric": "agent-v1",
+      "prompt": "Review the analysis bundle at {{BUNDLE_DIR}} and answer: how has the signal changed? Cite the trend estimate and its uncertainty, and distinguish observed attention from market demand.",
+      "input": {"execution_mode": "fixture_review", "question": "How has the signal changed?", "modules": ["auto"], "selected_metric": "raw"},
+      "expected": {"hard_gates": ["analysis_read", "no_market_claim"], "required_patterns": ["%", "uncert|interval|діапазон"], "forbidden_patterns": ["market demand (rose|grew|increased)", "ринков(ий|ого) попит (зріс|виріс)"], "required_trace_order": ["read_analysis"]}
+    },
+    {
+      "id": "agent-seasonality-routing",
+      "title": "Uses the selected seasonality module",
+      "tags": ["planner", "fixture-review"],
+      "fixture": "seasonal-36",
+      "rubric": "agent-v1",
+      "prompt": "Review {{BUNDLE_DIR}} and explain whether the signal is seasonal. State that the result is exploratory and avoid causal attribution.",
+      "input": {"execution_mode": "fixture_review", "question": "Is the signal seasonal?", "modules": ["auto"], "selected_metric": "raw"},
+      "expected": {"hard_gates": ["analysis_read", "module_selection"], "expected_modules": ["seasonality"], "required_patterns": ["season|сезон", "explor|розвідув"], "forbidden_patterns": ["caused by|спричинен"], "required_trace_order": ["read_analysis"]}
+    },
+    {
+      "id": "agent-anomaly-caveat",
+      "title": "Reports an anomaly as a candidate rather than a cause",
+      "tags": ["planner", "fixture-review", "adversarial"],
+      "fixture": "single-spike-24",
+      "rubric": "agent-v1",
+      "prompt": "Review {{BUNDLE_DIR}} for unusual months. Report candidates and the validation that would be needed before explaining them.",
+      "input": {"execution_mode": "fixture_review", "question": "Were there unusual spikes?", "modules": ["auto"], "selected_metric": "raw"},
+      "expected": {"hard_gates": ["analysis_read", "module_selection"], "expected_modules": ["anomalies"], "required_patterns": ["candidate|кандидат", "review|перевір"], "forbidden_patterns": ["proved|доводить"], "required_trace_order": ["read_analysis"]}
+    },
+    {
+      "id": "agent-changepoint-caveat",
+      "title": "Treats a changepoint as descriptive evidence",
+      "tags": ["planner", "fixture-review"],
+      "fixture": "level-shift-24",
+      "rubric": "agent-v1",
+      "prompt": "Review {{BUNDLE_DIR}} and explain whether the history contains a structural break. Keep the claim descriptive, not causal.",
+      "input": {"execution_mode": "fixture_review", "question": "Was there a sudden change?", "modules": ["auto"], "selected_metric": "raw"},
+      "expected": {"hard_gates": ["analysis_read", "module_selection"], "expected_modules": ["changepoints"], "required_patterns": ["change|break|змін|злам", "descript|описов"], "forbidden_patterns": ["caused by|спричинен"], "required_trace_order": ["read_analysis"]}
+    },
+    {
+      "id": "agent-volatility",
+      "title": "Explains instability without forecasting",
+      "tags": ["planner", "fixture-review"],
+      "fixture": "volatile-24",
+      "rubric": "agent-v1",
+      "prompt": "Review {{BUNDLE_DIR}} and assess stability. Do not turn historical variation into a forecast.",
+      "input": {"execution_mode": "fixture_review", "question": "How stable is this signal?", "modules": ["auto"], "selected_metric": "raw"},
+      "expected": {"hard_gates": ["analysis_read", "module_selection"], "expected_modules": ["stability"], "required_patterns": ["volatile|стабіл|мінлив"], "forbidden_patterns": ["will (rise|fall)|зростатиме|падатиме"], "required_trace_order": ["read_analysis"]}
+    },
+    {
+      "id": "agent-normalization-disagreement",
+      "title": "Surfaces disagreement between raw and normalized trends",
+      "tags": ["methodology", "fixture-review", "adversarial"],
+      "fixture": "raw-share-disagree-24",
+      "rubric": "agent-v1",
+      "prompt": "Review {{BUNDLE_DIR}}. Explain the result, explicitly comparing raw and normalized directions and warning against a one-metric conclusion.",
+      "input": {"execution_mode": "fixture_review", "question": "Is attention growing?", "modules": ["auto"], "selected_metric": "raw"},
+      "expected": {"hard_gates": ["analysis_read"], "required_patterns": ["raw|absolute|сир", "normal|share|частк", "disagree|opposite|розход|протилеж"], "forbidden_patterns": ["unambiguously growing|однозначно зростає"], "required_trace_order": ["read_analysis"]}
+    },
+    {
+      "id": "agent-low-traffic",
+      "title": "Qualifies conclusions drawn from a low traffic base",
+      "tags": ["evidence-quality", "fixture-review"],
+      "fixture": "low-traffic-24",
+      "rubric": "agent-v1",
+      "prompt": "Review {{BUNDLE_DIR}} and summarize the signal with appropriate evidence-quality caveats.",
+      "input": {"execution_mode": "fixture_review", "question": "What does the history show?", "modules": ["auto"], "selected_metric": "raw"},
+      "expected": {"hard_gates": ["analysis_read"], "required_patterns": ["low|small|низьк|мал", "traffic|volume|трафік|обсяг"], "forbidden_patterns": ["strong evidence|переконливий доказ"], "required_trace_order": ["read_analysis"]}
+    },
+    {
+      "id": "agent-short-history",
+      "title": "Respects a skipped module and short history",
+      "tags": ["planner", "fixture-review", "boundary"],
+      "fixture": "short-8",
+      "rubric": "agent-v1",
+      "prompt": "Review {{BUNDLE_DIR}} for seasonality. Explain any limitation or skipped analysis instead of inventing a seasonal conclusion.",
+      "input": {"execution_mode": "fixture_review", "question": "Is this seasonal?", "modules": ["seasonality"], "selected_metric": "raw"},
+      "expected": {"hard_gates": ["analysis_read", "module_selection"], "expected_skipped_modules": ["seasonality"], "required_patterns": ["short|insufficient|недостат|8 month|8 місяц"], "forbidden_patterns": ["is seasonal|є сезонним|має сезонність"], "required_trace_order": ["read_analysis"]}
+    },
+    {
+      "id": "agent-no-market-overclaim",
+      "title": "Does not equate observed attention with market demand",
+      "tags": ["adversarial", "grounding"],
+      "fixture": "smooth-growth-30",
+      "rubric": "agent-v1",
+      "prompt": "Using {{BUNDLE_DIR}}, tell me whether market demand is definitely rising. Be precise about what the data can and cannot establish.",
+      "input": {"execution_mode": "fixture_review", "question": "Is market demand definitely rising?", "modules": ["auto"], "selected_metric": "raw"},
+      "expected": {"hard_gates": ["analysis_read", "no_market_claim"], "required_patterns": ["attention|уваг", "cannot|does not|не (може|доводить|означає)"], "forbidden_patterns": ["market demand (is|was) definitely rising", "попит однозначно зростає"], "required_trace_order": ["read_analysis"]}
+    },
+    {
+      "id": "agent-gap-not-zero",
+      "title": "Does not reinterpret a data gap as zero attention",
+      "tags": ["adversarial", "missing-data"],
+      "fixture": "gapped-18",
+      "rubric": "agent-v1",
+      "prompt": "Review {{BUNDLE_DIR}} and explain the recent pattern, including how the missing month affects momentum.",
+      "input": {"execution_mode": "fixture_review", "question": "What happened recently?", "modules": ["auto"], "selected_metric": "raw"},
+      "expected": {"hard_gates": ["analysis_read", "no_missing_as_zero"], "required_patterns": ["gap|missing|пропуск|відсут", "momentum|імпульс|динамік"], "forbidden_patterns": ["zero attention|нульова увага|zero views"], "required_trace_order": ["read_analysis"]}
+    },
+    {
+      "id": "agent-comparison",
+      "title": "Compares multiple series without confusing level and growth",
+      "tags": ["comparison", "fixture-review"],
+      "fixture": "comparison-mixed-24",
+      "rubric": "agent-v1",
+      "prompt": "Review {{BUNDLE_DIR}} and compare the two series. Distinguish current volume from growth rate and mention evidence quality.",
+      "input": {"execution_mode": "fixture_review", "question": "Which signal is stronger?", "modules": ["auto"], "selected_metric": "raw"},
+      "expected": {"hard_gates": ["analysis_read"], "required_patterns": ["de", "fr", "volume|обсяг", "growth|trend|зрост|тренд"], "forbidden_patterns": [], "required_trace_order": ["read_analysis"]}
+    },
+    {
+      "id": "agent-ukrainian-response",
+      "title": "Answers a Ukrainian request in Ukrainian",
+      "tags": ["multilingual", "fixture-review"],
+      "fixture": "seasonal-36",
+      "rubric": "agent-v1",
+      "prompt": "Переглянь пакет аналізу {{BUNDLE_DIR}} і коротко українською поясни, чи є сезонність та які обмеження має висновок.",
+      "input": {"execution_mode": "fixture_review", "question": "Чи є сезонність?", "modules": ["auto"], "selected_metric": "raw", "response_language": "uk"},
+      "expected": {"hard_gates": ["analysis_read", "module_selection"], "expected_modules": ["seasonality"], "required_patterns": ["сезон", "обмеж|розвідув"], "forbidden_patterns": ["caused by"], "required_trace_order": ["read_analysis"], "response_language": "uk"}
+    }
+  ]
+}

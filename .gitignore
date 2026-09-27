@@ -1,0 +1,11 @@
+.DS_Store
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.cache/
+run-output/
+tmp/
+interest-signals-dev/results/
+interest-signals-dev/evals/prepared/
